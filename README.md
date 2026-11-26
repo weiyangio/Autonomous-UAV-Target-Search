@@ -17,20 +17,12 @@ Gazebo, SLAM and YOLOv11.
 
 
 !\[ROS2](https://img.shields.io/badge/ROS2-Robotics-blue)
-
 !\[PX4](https://img.shields.io/badge/PX4-Autopilot-blue)
-
 !\[Gazebo](https://img.shields.io/badge/Gazebo-Simulation-orange)
-
 !\[Python](https://img.shields.io/badge/Python-Development-yellow)
-
 !\[YOLO](https://img.shields.io/badge/YOLOv11-Detection-green)
 
-
-
 \## 1. 项目简介 | Overview
-
-
 
 本项目面向室内未知环境下的无人机自主探索
 
@@ -83,36 +75,19 @@ Gazebo, SLAM and YOLOv11.
 
 
 | Module | Technology |
-
 | --- | --- |
-
 | Robotics Framework | ROS2 |
-
 | Flight Control | PX4 |
-
 | Simulation | Gazebo |
-
 | Mapping | SLAM Toolbox |
-
 | Object Detection | YOLOv11, OpenCV |
-
 | Path Planning | A\*, APF, MPC |
-
 | Programming | Python, C++ |
 
-
-
 \## 5. 仿真结果 | Simulation Results
-
-
-
 \### 室内环境仿真
 
-
-
 !\[Gazebo](assets/gazebo-demo.png)
-
-
 
 \### 自主定位与地图构建
 
