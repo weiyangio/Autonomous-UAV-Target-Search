@@ -1,0 +1,72 @@
+# slam_toolbox online_async 参数配置
+# 适用于 PX4 SITL 室内搜索场景
+# 坐标系: odom(x=东/ENU_x=NED_y, y=北/ENU_y=NED_x, z=上/ENU_z=-NED_z) → base_link → laser_link
+# yaw_enu = π/2 - heading_ned，与 px4_slam_bridge_node 标准 ROS ENU 保持一致
+#
+# 参数说明参考: slam_toolbox 2.6.x (ROS Humble)
+# 官方文档: https://github.com/SteveMacenski/slam_toolbox/blob/ros2/README.md
+# ★ 无效参数会被 slam_toolbox 静默忽略，切勿添加未文档参数（否则调参无效）
+
+slam_toolbox:
+  ros__parameters:
+
+    # ── 核心帧 ID（必须与 px4_slam_bridge_node 一致）──────────────────────
+    odom_frame:        odom
+    base_frame:        base_link
+    map_frame:         map
+    scan_topic:        /scan
+
+    # ── 工作模式 ──────────────────────────────────────────────────────────
+    mode:              mapping
+
+    # ── Scan Matching 参数（ICP/CSM 配准）────────────────────────────────
+    use_scan_matching:      true
+    use_scan_barycenter:    true
+    # minimum_travel_distance: 悬停旋转时几乎不平移，此参数对 HOVER_SCAN 影响小；
+    #   0.25m 避免微漂触发过密配准。
+    # minimum_travel_heading: 控制旋转扫描更新频率。
+    #   以 0.2rad/s(11°/s) 旋转，0.10rad→每 0.5s 一次 scan match，约 1.5~2Hz；
+    #   之前 0.15rad 是 0.75s 一次，会使早期墙体出现变慢。降为 0.10 加快边界形成。
+    minimum_travel_distance: 0.25   # m: 移动 25cm 才触发（悬停旋转时不影响）
+    minimum_travel_heading:  0.10   # rad(≈5.7°): 每转 5.7° 触发一次配准，加快边界出现
+    scan_buffer_size:        30     # 更多参考帧，提升小房间配准质量（原20→30）
+    scan_buffer_maximum_scan_distance: 10.0
+
+    # ── 激光雷达参数（参数名已确认 slam_toolbox 2.6.x 支持）────────────────
+    # ★ 注意：range_threshold 为无效参数，已删除（slam_toolbox 不支持该名称）
+    max_laser_range:      20.0     # m: RPLidar A3 最大量程 ~25m，留余量
+    minimum_laser_range:   0.10    # m: 最小有效距离（过滤机体反射噪声）
+
+    # ── Loop Closure（闭环检测）────────────────────────────────────────────
+    # 室内小范围地图启用闭环可消除 EKF 累积漂移
+    # ★ 调试时如遇"地图突变/跳变"请先临时设为 false 定位问题（debug yaml已配置）
+    # ★ Phase-6 保守调参：进一步提高置信度阈值，减少小房间弱特征条件下的误闭环跳变
+    #   - coarse 0.50→0.55：粗匹配门控更严，减少误进入 fine 阶段
+    #   - minimum_loop_closure_score 0.65→0.72：最终置信度门控更严，减少 map 跳变
+    do_loop_closing:        true
+    loop_match_minimum_response_coarse: 0.55  # 提高：减少误闭环（原0.50）
+    loop_match_minimum_response_fine:   0.60
+    loop_match_maximum_variance_coarse: 2.5   # 收窄协方差门控（原3.0）
+    minimum_loop_closure_score:         0.72  # 提高：减少误闭环（原0.65）
+    loop_search_space_dimension:        8.0
+
+    # ── 相关扫描匹配器（Correlative Scan Matcher）─────────────────────────
+    # Stop-Scan-Go：悬停时 EKF 漂移小（<0.2m），缩小搜索空间
+    linear_search_space:    0.35    # m: 悬停时 EKF 漂移<0.2m
+    angular_search_space:   0.35    # rad: ~20°
+    fine_search_angle_offset: 0.00349  # rad: 精细搜索步长 0.2°
+
+    # ── 地图参数 ───────────────────────────────────────────────────────────
+    map_update_interval:    0.5    # s: 每0.5s发布一次/map（原1.0s→0.5s，加快边界出现响应速度）
+    resolution:             0.05   # m: 地图分辨率 0.05m
+    map_start_at_dock:      false
+
+    # ── 时间同步 ───────────────────────────────────────────────────────────
+    use_sim_time:           true   # PX4 仿真必须设为 true
+
+    # ── 其他 ───────────────────────────────────────────────────────────────
+    interactive_mode:       false
+    tf_buffer_duration:     30.0   # s: TF 缓冲时长，覆盖仿真时间跳变
+    stack_size_to_use:      40000000  # bytes: 40MB 线程栈
+    scan_queue_size:        20     # 内部 MessageFilter 队列深度
+    transform_timeout:      0.3    # s: 等待 TF 超时（50Hz scan → 20ms/帧）

@@ -1,0 +1,24 @@
+indoor_search/
+├── scripts/start_indoor_search.sh
+├── src/
+│   ├── target_search_node.py       (14194行)
+│   ├── px4_slam_bridge_node.py     ( 1119行)
+│   ├── local_mpc_node.py           (  551行)
+│   ├── global_planner_node.py      (  531行)
+│   ├── failsafe_manager.py         (  507行)  ← 原创成果保留
+│   ├── apf_node.py                 (  393行)
+│   ├── safety_monitor.py           (  121行)
+│   └── target_confirmation.py      (   38行)
+├── msg/
+│   ├── ApfCommand.msg
+│   ├── LocalCommand.msg
+│   └── SearchPath.msg
+├── launch/indoor_search.launch.py  (  183行)
+├── config/
+│   ├── slam_toolbox_params.yaml
+│   └── slam_toolbox_params_debug.yaml
+├── start_indoor_search.sh
+├── CMakeLists.txt
+└── package.xml
+
+总源程序量：约 17,650 行

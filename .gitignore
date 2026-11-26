@@ -1,0 +1,40 @@
+
+# ROS2 build artifacts
+build/
+install/
+log/
+.colcon/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment and credentials
+.env
+.env.*
+*.pem
+*.key
+
+# Model weights
+*.pt
+*.onnx
+*.engine
+
+# Simulation and recorded data
+*.bag
+*.db3
+*.mcap
+*.ulg
+*.log
+
+# Temporary files
+*.tmp
+.DS_Store
+Thumbs.db
